@@ -60,8 +60,13 @@ app.get("/secrets", async(req, res) => {
   if (req.isAuthenticated()) {
     const result=await db.query("select * from husers where email=$1",[req.user.email]);
     console.log(result.rows[0]);
-    res.render("secrets.ejs",{secret:result.rows[0].secret});
-
+    const secret=result.rows[0].secret;
+    if(secret){
+      res.render("secrets.ejs",{secret:secret});
+    }
+    else{
+      res.render("secrets.ejs",{secret:""});
+    }
     //TODO: Update this to pull in the user secret to render in secrets.ejs
   } else {
     res.redirect("/login");
@@ -129,10 +134,8 @@ app.post("/register", async (req, res) => {
 
 app.post("/submit",async(req,res)=>{
   const secret=req.body.secret;
-  if(secret.length!=0)
-  {
-    const result=await db.query("update husers set secret=$1 where email=$2",[secret,req.user.email]);
-  }
+  const result=await db.query("update husers set secret=$1 where email=$2",[secret,req.user.email]);
+  
   res.redirect("/secrets");
 })
 
