@@ -137,7 +137,12 @@ app.post("/submit",async(req,res)=>{
 })
 
 app.get("/submit",(req,res)=>{
+ if(req.isAuthenticated()){
   res.render("submit.ejs");
+ }
+ else{
+  req.redirect("/login");
+ }
 })
 
 
